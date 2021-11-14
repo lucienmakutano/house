@@ -5,62 +5,69 @@
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
-void drawCircle( GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOfSides );
+void drawCircle(GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOfSides);
 
-int main()
-{
+int main() {
     GLFWwindow *window;
 
     // Initialize the library
-    if ( !glfwInit( ) )
-    {
+    if (!glfwInit()) {
         return -1;
     }
 
     // Create a windowed mode window and its OpenGL context
-    window = glfwCreateWindow( SCREEN_WIDTH, SCREEN_HEIGHT, "House", nullptr, nullptr );
+    window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "House", nullptr, nullptr);
 
-    if ( !window )
-    {
-        glfwTerminate( );
+    if (!window) {
+        glfwTerminate();
         return -1;
     }
 
     // Make the window's context current
-    glfwMakeContextCurrent( window );
+    glfwMakeContextCurrent(window);
 
-    glViewport( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT ); // specifies the part of the window to which OpenGL will draw (in pixels), convert from normalised to pixels
-    glMatrixMode( GL_PROJECTION ); // projection matrix defines the properties of the camera that views the objects in the world coordinate frame. Here you typically set the zoom factor, aspect ratio and the near and far clipping planes
-    glLoadIdentity( ); // replace the current matrix with the identity matrix and starts us a fresh because matrix transforms such as glOrpho and glRotate cumulate, basically puts us at (0, 0, 0)
-    glOrtho( 0, SCREEN_WIDTH, 0, SCREEN_HEIGHT, 0, 1 ); // essentially set coordinate system
-    glMatrixMode( GL_MODELVIEW ); // (default matrix mode) modelView matrix defines how your objects are transformed (meaning translation, rotation and scaling) in your world
-    glLoadIdentity( ); // same as above comment
+    // specifies the part of the window to which OpenGL will draw (in pixels), convert from normalised to pixels
+    glViewport(0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    // projection matrix defines the properties of the camera that views the objects in the world coordinate frame. Here you typically set the zoom factor, aspect ratio and the near and far clipping planes
+    glMatrixMode(GL_PROJECTION);
+
+    // replace the current matrix with the identity matrix and starts us a fresh because matrix transforms such as glOrpho and glRotate cumulate, basically puts us at (0, 0, 0)
+    glLoadIdentity();
+
+    // essentially set coordinate system
+    glOrtho(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT, 0, 1);
+
+    // (default matrix mode) modelView matrix defines how your objects are transformed (meaning translation, rotation and scaling) in your world
+    glMatrixMode(GL_MODELVIEW);
+
+    // same as above comment
+    glLoadIdentity();
 
     // Loop until the user closes the window
-    while ( !glfwWindowShouldClose( window ) )
-    {
-        glClear( GL_COLOR_BUFFER_BIT );
+    while (!glfwWindowShouldClose(window)) {
+        glClear(GL_COLOR_BUFFER_BIT);
 
         // render OpenGL here
-        glColor3f(255,140,0);
-        drawCircle( SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f, 0, 30, 360 );
+        glColor3f(255, 140, 0);
+        drawCircle(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f, 0, 30, 360);
+
         glColor3f(0.0, 0.0, 0.0);
-        drawCircle( (SCREEN_WIDTH / 2.0f) + 10, (SCREEN_HEIGHT / 2.0f) + 10, 0, 30, 360 );
+        drawCircle((SCREEN_WIDTH / 2.0f) + 10, (SCREEN_HEIGHT / 2.0f) + 10, 0, 30, 360);
 
         // Swap front and back buffers
-        glfwSwapBuffers( window );
+        glfwSwapBuffers(window);
 
         // Poll for and process events
-        glfwPollEvents( );
+        glfwPollEvents();
     }
 
-    glfwTerminate( );
+    glfwTerminate();
 
     return 0;
 }
 
-void drawCircle( GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOfSides )
-{
+void drawCircle(GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOfSides) {
     GLint numberOfVertices = numberOfSides + 2;
 
     GLfloat twicePi = 2.0f * M_PI;
@@ -73,24 +80,22 @@ void drawCircle( GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOf
     circleVerticesY[0] = y;
     circleVerticesZ[0] = z;
 
-    for ( int i = 1; i < numberOfVertices; i++ )
-    {
-        circleVerticesX[i] = x + ( radius * std::cos( (float)i *  twicePi / (float)numberOfSides ) );
-        circleVerticesY[i] = y + ( radius * std::sin( (float)i * twicePi / (float)numberOfSides ) );
+    for (int i = 1; i < numberOfVertices; i++) {
+        circleVerticesX[i] = x + (radius * std::cos((float) i * twicePi / (float) numberOfSides));
+        circleVerticesY[i] = y + (radius * std::sin((float) i * twicePi / (float) numberOfSides));
         circleVerticesZ[i] = z;
     }
 
-    GLfloat allCircleVertices[( numberOfVertices ) * 3];
+    GLfloat allCircleVertices[(numberOfVertices) * 3];
 
-    for ( int i = 0; i < numberOfVertices; i++ )
-    {
+    for (int i = 0; i < numberOfVertices; i++) {
         allCircleVertices[i * 3] = circleVerticesX[i];
-        allCircleVertices[( i * 3 ) + 1] = circleVerticesY[i];
-        allCircleVertices[( i * 3 ) + 2] = circleVerticesZ[i];
+        allCircleVertices[(i * 3) + 1] = circleVerticesY[i];
+        allCircleVertices[(i * 3) + 2] = circleVerticesZ[i];
     }
 
-    glEnableClientState( GL_VERTEX_ARRAY );
-    glVertexPointer( 3, GL_FLOAT, 0, allCircleVertices );
-    glDrawArrays( GL_TRIANGLE_FAN, 0, numberOfVertices);
-    glDisableClientState( GL_VERTEX_ARRAY );
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, allCircleVertices);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, numberOfVertices);
+    glDisableClientState(GL_VERTEX_ARRAY);
 }
