@@ -1,13 +1,13 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <math.h>
+#include <cmath>
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
 void drawCircle( GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOfSides );
 
-int main( void )
+int main()
 {
     GLFWwindow *window;
 
@@ -18,7 +18,7 @@ int main( void )
     }
 
     // Create a windowed mode window and its OpenGL context
-    window = glfwCreateWindow( SCREEN_WIDTH, SCREEN_HEIGHT, "Hello World", NULL, NULL );
+    window = glfwCreateWindow( SCREEN_WIDTH, SCREEN_HEIGHT, "House", nullptr, nullptr );
 
     if ( !window )
     {
@@ -43,9 +43,9 @@ int main( void )
 
         // render OpenGL here
         glColor3f(255,140,0);
-        drawCircle( SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 0, 30, 360 );
+        drawCircle( SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f, 0, 30, 360 );
         glColor3f(0.0, 0.0, 0.0);
-        drawCircle( (SCREEN_WIDTH / 2) + 10, (SCREEN_HEIGHT / 2) + 10, 0, 30, 360 );
+        drawCircle( (SCREEN_WIDTH / 2.0f) + 10, (SCREEN_HEIGHT / 2.0f) + 10, 0, 30, 360 );
 
         // Swap front and back buffers
         glfwSwapBuffers( window );
@@ -61,7 +61,7 @@ int main( void )
 
 void drawCircle( GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOfSides )
 {
-    int numberOfVertices = numberOfSides + 2;
+    GLint numberOfVertices = numberOfSides + 2;
 
     GLfloat twicePi = 2.0f * M_PI;
 
@@ -75,8 +75,8 @@ void drawCircle( GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOf
 
     for ( int i = 1; i < numberOfVertices; i++ )
     {
-        circleVerticesX[i] = x + ( radius * cos( i *  twicePi / numberOfSides ) );
-        circleVerticesY[i] = y + ( radius * sin( i * twicePi / numberOfSides ) );
+        circleVerticesX[i] = x + ( radius * std::cos( (float)i *  twicePi / (float)numberOfSides ) );
+        circleVerticesY[i] = y + ( radius * std::sin( (float)i * twicePi / (float)numberOfSides ) );
         circleVerticesZ[i] = z;
     }
 
