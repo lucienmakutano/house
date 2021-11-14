@@ -1,5 +1,9 @@
 .idea/
 cmake-build-debug/
+Libraries/
+Library/
+OpenGL/
 
 CMakeLists.txt
+CMake*
 glad.c
