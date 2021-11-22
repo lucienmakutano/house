@@ -5,9 +5,13 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 
-void draw_circle(GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOfSides);
+void draw_circle(GLint moon_radius, GLint moon_center_x, GLint moon_center_y, GLint moon_steps, GLfloat color_points[]);
+
 void draw_window(int polygon_params[4][2], int lines_params[4][2]);
+
 void draw_door();
+
+void draw_roof();
 
 int main() {
     GLFWwindow *window;
@@ -48,6 +52,7 @@ int main() {
 
     // Loop until the user closes the window
     while (!glfwWindowShouldClose(window)) {
+        glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
         //main body
@@ -64,24 +69,39 @@ int main() {
         glEnd();
 
         // Left window
-        int left_p[4][2] = {{230, 320}, {350, 320}, {350, 230}, {230, 230}};
-        int left_l[4][2] = {{290, 320}, {290, 230}, {230, 273}, {350, 273}};
+        int left_p[4][2] = {{230, 320},
+                            {350, 320},
+                            {350, 230},
+                            {230, 230}};
+        int left_l[4][2] = {{290, 320},
+                            {290, 230},
+                            {230, 273},
+                            {350, 273}};
         draw_window(left_p, left_l);
 
         // Right window
-        int right_p[4][2] = {{430, 320}, {550, 320}, {550, 230}, {430, 230}};
-        int right_l[4][2] = {{490, 320}, {490, 230}, {430, 273}, {550, 273}};
+        int right_p[4][2] = {{430, 320},
+                             {550, 320},
+                             {550, 230},
+                             {430, 230}};
+        int right_l[4][2] = {{490, 320},
+                             {490, 230},
+                             {430, 273},
+                             {550, 273}};
         draw_window(right_p, right_l);
 
         // Front Door
         draw_door();
 
-        // render OpenGL here
-        glColor3f(255, 140, 0);
-        draw_circle(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f, 0, 30, 360);
+        // Roof
+        draw_roof();
 
-        glColor3f(0.0, 0.0, 0.0);
-        draw_circle((SCREEN_WIDTH / 2.0f) + 10, (SCREEN_HEIGHT / 2.0f) + 10, 0, 30, 360);
+        // render OpenGL here
+        GLfloat c1_color[] = {255, 140, 0};
+        draw_circle(50, 700, 500, 100, c1_color);
+
+        GLfloat c2_color[] = {1.0, 1.0, 1.0};
+        draw_circle(50, 725, 525, 100, c2_color);
 
         // Swap front and back buffers
         glfwSwapBuffers(window);
@@ -95,42 +115,23 @@ int main() {
     return 0;
 }
 
-void draw_circle(GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOfSides) {
-    GLint numberOfVertices = numberOfSides + 2;
-
-    GLfloat twicePi = 2.0f * M_PI;
-
-    GLfloat circleVerticesX[numberOfVertices];
-    GLfloat circleVerticesY[numberOfVertices];
-    GLfloat circleVerticesZ[numberOfVertices];
-
-    circleVerticesX[0] = x;
-    circleVerticesY[0] = y;
-    circleVerticesZ[0] = z;
-
-    for (int i = 1; i < numberOfVertices; i++) {
-        circleVerticesX[i] = x + (radius * std::cos((float) i * twicePi / (float) numberOfSides));
-        circleVerticesY[i] = y + (radius * std::sin((float) i * twicePi / (float) numberOfSides));
-        circleVerticesZ[i] = z;
+void
+draw_circle(GLint moon_radius, GLint moon_center_x, GLint moon_center_y, GLint moon_steps, GLfloat color_points[]) {
+    float circle_angle = M_PI * 2.0f;
+    glColor3f(color_points[0], color_points[1], color_points[2]);
+    glBegin(GL_TRIANGLE_FAN);
+    for (int a = 0; a <= moon_steps; a++) {
+        float angle = circle_angle * float(a) / float(moon_steps);//get the current angle
+        float moon_x = (float) moon_radius * cosf(angle);//calculate the x component
+        float moon_y = (float) moon_radius * sinf(angle);//calculate the y component
+        glVertex2f(moon_x + (float) moon_center_x, moon_y + (float) moon_center_y);//output vertex
     }
-
-    GLfloat allCircleVertices[(numberOfVertices) * 3];
-
-    for (int i = 0; i < numberOfVertices; i++) {
-        allCircleVertices[i * 3] = circleVerticesX[i];
-        allCircleVertices[(i * 3) + 1] = circleVerticesY[i];
-        allCircleVertices[(i * 3) + 2] = circleVerticesZ[i];
-    }
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, allCircleVertices);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, numberOfVertices);
-    glDisableClientState(GL_VERTEX_ARRAY);
+    glEnd();
 }
 
-void draw_window(int polygon_params[4][2], int lines_params[4][2]){
+void draw_window(int polygon_params[4][2], int lines_params[4][2]) {
     // Window
-    glColor3f(0.1, 0.1, 0.3);
+    glColor3f(0.1, 0.7, 0.5);
     glBegin(GL_POLYGON);
     glVertex2i(polygon_params[0][0], polygon_params[0][1]);
     glVertex2i(polygon_params[1][0], polygon_params[1][1]);
@@ -139,7 +140,7 @@ void draw_window(int polygon_params[4][2], int lines_params[4][2]){
     glEnd();
 
     // lines on the window
-    glColor3f(0.1, 0.7, 0.5);
+    glColor3f(0.1, 0.1, 0.3);
     glLineWidth(3);
     glBegin(GL_LINES);
     glVertex2i(lines_params[0][0], lines_params[0][1]);
@@ -151,7 +152,8 @@ void draw_window(int polygon_params[4][2], int lines_params[4][2]){
 
 void draw_door() {
     // Front Door
-    glColor3f(0.1, 0.1, 0.3);
+//    glColor3f(0.1, 0.1, 0.3);
+    glColor3f(0.1, 0.7, 0.5);
     glBegin(GL_POLYGON);
     glVertex2i(350, 200);
     glVertex2i(425, 200);
@@ -161,9 +163,29 @@ void draw_door() {
 
 
     // Front Door handle
-    glColor3f(0.1, 0.7, 0.5);
+    glColor3f(0.1, 0.1, 0.3);
     glPointSize(10);
     glBegin(GL_POINTS);
     glVertex2i(400, 150);
+    glEnd();
+}
+
+void draw_roof() {
+    //semi-circle roof
+    glColor3f(1.0, 1.0, 1.0);
+    int center_x = 400; //x axis center
+    int center_y = 400; //y axis center
+    int roof_r = 100; //radius
+    // int roof_d = 200; //diameter
+    float semi_circle_angle = M_PI * 1.0f;
+    int steps = 360;
+    glColor3f(0.1, 0.7, 0.5);
+    glBegin(GL_TRIANGLE_FAN);
+    for (int i = 0; i < steps; i++) {
+        float theta = semi_circle_angle * float(i) / float(steps);//get the current angle
+        float x = (float) roof_r * cosf(theta);//calculate the x component
+        float y = (float) roof_r * sinf(theta);//calculate the y component
+        glVertex2f(x + (float) center_x, y + (float) center_y);//output vertex
+    }
     glEnd();
 }
