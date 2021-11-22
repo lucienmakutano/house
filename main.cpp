@@ -2,10 +2,11 @@
 #include <GLFW/glfw3.h>
 #include <cmath>
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
 
-void drawCircle(GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOfSides);
+void draw_circle(GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOfSides);
+void draw_window(int polygon_params[4][2], int lines_params[4][2]);
 
 int main() {
     GLFWwindow *window;
@@ -48,12 +49,36 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);
 
+        //main body
+        glColor3f(0.1, 0.7, 0.5);
+        glBegin(GL_LINE_LOOP);
+        glVertex2i(200, 100);
+        glVertex2i(200, 350);
+        glVertex2i(100, 350);
+        glVertex2i(100, 400);
+        glVertex2i(700, 400);
+        glVertex2i(700, 350);
+        glVertex2i(600, 350);
+        glVertex2i(600, 100);
+        glEnd();
+
+        // Left window
+        int left_p[4][2] = {{230, 320}, {350, 320}, {350, 230}, {230, 230}};
+        int left_l[4][2] = {{290, 320}, {290, 230}, {230, 273}, {350, 273}};
+        draw_window(left_p, left_l);
+
+        // Right window
+        int right_p[4][2] = {{430, 320}, {550, 320}, {550, 230}, {430, 230}};
+        int right_l[4][2] = {{490, 320}, {490, 230}, {430, 273}, {550, 273}};
+        draw_window(right_p, right_l);
+
+
         // render OpenGL here
         glColor3f(255, 140, 0);
-        drawCircle(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f, 0, 30, 360);
+        draw_circle(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f, 0, 30, 360);
 
         glColor3f(0.0, 0.0, 0.0);
-        drawCircle((SCREEN_WIDTH / 2.0f) + 10, (SCREEN_HEIGHT / 2.0f) + 10, 0, 30, 360);
+        draw_circle((SCREEN_WIDTH / 2.0f) + 10, (SCREEN_HEIGHT / 2.0f) + 10, 0, 30, 360);
 
         // Swap front and back buffers
         glfwSwapBuffers(window);
@@ -67,7 +92,7 @@ int main() {
     return 0;
 }
 
-void drawCircle(GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOfSides) {
+void draw_circle(GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOfSides) {
     GLint numberOfVertices = numberOfSides + 2;
 
     GLfloat twicePi = 2.0f * M_PI;
@@ -98,4 +123,25 @@ void drawCircle(GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOfS
     glVertexPointer(3, GL_FLOAT, 0, allCircleVertices);
     glDrawArrays(GL_TRIANGLE_FAN, 0, numberOfVertices);
     glDisableClientState(GL_VERTEX_ARRAY);
+}
+
+void draw_window(int polygon_params[4][2], int lines_params[4][2]){
+    // Window
+    glColor3f(0.1, 0.1, 0.3);
+    glBegin(GL_POLYGON);
+    glVertex2i(polygon_params[0][0], polygon_params[0][1]);
+    glVertex2i(polygon_params[1][0], polygon_params[1][1]);
+    glVertex2i(polygon_params[2][0], polygon_params[2][1]);
+    glVertex2i(polygon_params[3][0], polygon_params[3][1]);
+    glEnd();
+
+    // lines on the window
+    glColor3f(0.1, 0.7, 0.5);
+    glLineWidth(3);
+    glBegin(GL_LINES);
+    glVertex2i(lines_params[0][0], lines_params[0][1]);
+    glVertex2i(lines_params[1][0], lines_params[1][1]);
+    glVertex2i(lines_params[2][0], lines_params[2][1]);
+    glVertex2i(lines_params[3][0], lines_params[3][1]);
+    glEnd();
 }
