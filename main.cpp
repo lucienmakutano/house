@@ -7,6 +7,7 @@
 
 void draw_circle(GLfloat x, GLfloat y, GLfloat z, GLfloat radius, GLint numberOfSides);
 void draw_window(int polygon_params[4][2], int lines_params[4][2]);
+void draw_door();
 
 int main() {
     GLFWwindow *window;
@@ -72,6 +73,8 @@ int main() {
         int right_l[4][2] = {{490, 320}, {490, 230}, {430, 273}, {550, 273}};
         draw_window(right_p, right_l);
 
+        // Front Door
+        draw_door();
 
         // render OpenGL here
         glColor3f(255, 140, 0);
@@ -143,5 +146,24 @@ void draw_window(int polygon_params[4][2], int lines_params[4][2]){
     glVertex2i(lines_params[1][0], lines_params[1][1]);
     glVertex2i(lines_params[2][0], lines_params[2][1]);
     glVertex2i(lines_params[3][0], lines_params[3][1]);
+    glEnd();
+}
+
+void draw_door() {
+    // Front Door
+    glColor3f(0.1, 0.1, 0.3);
+    glBegin(GL_POLYGON);
+    glVertex2i(350, 200);
+    glVertex2i(425, 200);
+    glVertex2i(425, 100);
+    glVertex2i(350, 100);
+    glEnd();
+
+
+    // Front Door handle
+    glColor3f(0.1, 0.7, 0.5);
+    glPointSize(10);
+    glBegin(GL_POINTS);
+    glVertex2i(400, 150);
     glEnd();
 }
